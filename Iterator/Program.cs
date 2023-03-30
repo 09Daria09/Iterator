@@ -11,13 +11,14 @@ class Program
         Colosseum colosseum = new Colosseum();
 
         Console.WriteLine("Как бы вы хотели добраться до Колизея?");
-        Console.WriteLine("1. Экскурсия (500 грн)");
-        Console.WriteLine("2. Навигатор (100 грн)");
-        Console.WriteLine("3. Самостоятельно");
+        Console.WriteLine("1. Экскурсия (500 грн, 1 час)");
+        Console.WriteLine("2. Навигатор (100 грн, 1.5 часа)");
+        Console.WriteLine("3. Самостоятельно (2 часа)");
 
         int choice = int.Parse(Console.ReadLine());
 
         IEnumerable route;
+        double time;
 
         switch (choice)
         {
@@ -28,7 +29,7 @@ class Program
                     Console.WriteLine("Недостаточно средств для выбора экскурсии.");
                     return;
                 }
-                budget -= 500;
+                time = 1;
                 break;
             case 2:
                 route = new Navigator();
@@ -37,24 +38,39 @@ class Program
                     Console.WriteLine("Недостаточно средств для выбора навигатора.");
                     return;
                 }
-                budget -= 100;
+                time = 1.5;
                 break;
             case 3:
                 route = new SelfGuided();
+                if (budget < 0)
+                {
+                    Console.WriteLine("Недостаточно средств для самостоятельного похода.");
+                    return;
+                }
+                time = 2;
                 break;
             default:
-                Console.WriteLine("Неправильный выбор");
+                Console.WriteLine("Выбор не распознан.");
                 return;
         }
 
-        Console.WriteLine("Ваш бюджет: " + budget);
+        Console.WriteLine("Маршрут:");
 
-        foreach (string stop in route)
+        foreach (var location in route)
         {
-            Console.WriteLine("Остановка: " + stop);
+            Console.WriteLine(location);
         }
 
-        colosseum.Visit();
+        Console.WriteLine($"Время затраченное на поход: {time} часов.");
+
+        if (budget < 0)
+        {
+            Console.WriteLine("Недостаточно средств для завершения похода.");
+            return;
+        }
+
+        Console.WriteLine($"Оставшийся бюджет: {budget} грн.");
+        Console.WriteLine("Ура, вы достигли Колизея!");
     }
 }
 
